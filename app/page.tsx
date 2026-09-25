@@ -3,44 +3,71 @@ import Link from 'next/link';
 import { Mic, ShieldCheck, Zap, Radio, ArrowRight, Bug, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AvatarGroup } from '@/components/ui/AvatarGroup';
+import { NoiseTexture } from '@/components/ui/noise-texture';
 import { SPECIES_LIST, getStateFamousWords } from '@/lib/constants';
 
 export default function HomePage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-16">
-      {/* Hero Section */}
-      <section className="text-center py-12 md:py-20 space-y-6">
-        <div className="inline-flex items-center gap-2">
-          <Badge variant="live" className="px-3 py-1 text-xs">
-            <span className="h-2 w-2 rounded-full bg-accent-coral animate-ping mr-1" />
-            28 State Voice Rooms Active
-          </Badge>
-        </div>
+      {/* Hero Section with Noise Texture */}
+      <section className="relative overflow-hidden rounded-brutal-lg border-2 sm:border-3 border-border/80 bg-card/50 dark:bg-card/30 backdrop-blur-xs px-4 sm:px-8 py-12 sm:py-16 md:py-24 text-center space-y-6 sm:space-y-8 shadow-brutal-dark">
+        {/* Ambient radial glows behind noise texture */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[500px] md:w-[750px] h-[220px] sm:h-[350px] bg-primary/15 dark:bg-primary/20 rounded-full blur-[70px] sm:blur-[110px]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-12 -right-12 w-40 sm:w-72 h-40 sm:h-72 bg-accent-coral/10 rounded-full blur-[50px] sm:blur-[80px]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-10 -left-10 w-40 sm:w-72 h-40 sm:h-72 bg-accent-gold/10 rounded-full blur-[50px] sm:blur-[80px]"
+        />
 
-        <h1 className="text-4xl sm:text-6xl font-black font-mono tracking-tight uppercase max-w-4xl mx-auto leading-none">
-          Live Voice Rooms.<br />
-          <span className="text-primary underline decoration-border decoration-wavy decoration-2">
-            Every State Has a Room.
-          </span>
-        </h1>
+        {/* Magic UI Noise Texture Overlay */}
+        <NoiseTexture
+          mask="radial"
+          frequency={0.5}
+          octaves={4}
+          slope={0.25}
+          noiseOpacity={0.75}
+          className="opacity-70 dark:opacity-85 "
+        />
 
-        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
-          Drop into live audio junctions representing 28 Indian States & UTs. Zero login, zero password, 100% anonymous WebRTC voice streams.
-        </p>
+        {/* Hero Content (Layered above noise texture) */}
+        <div className="relative z-10 space-y-6 sm:space-y-8">
+          <div className="inline-flex items-center gap-2">
+            <Badge variant="live" className="px-3.5 py-1 text-xs font-mono font-bold tracking-wider shadow-xs">
+              <span className="h-2 w-2 rounded-full bg-accent-coral animate-ping mr-1" />
+              28 State Voice Rooms Active
+            </Badge>
+          </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-          <Button asChild size="lg" className="gap-2">
-            <Link href="/junctions">
-              Explore State Junctions <Mic className="h-5 w-5" />
-            </Link>
-          </Button>
+          <h1 className="text-xl xs:text-2xl sm:text-4xl md:text-6xl font-black font-mono tracking-tight uppercase max-w-4xl mx-auto leading-snug sm:leading-tight">
+            Live Voice Rooms.<br />
+            <span className="text-primary underline decoration-border decoration-wavy decoration-2">
+              Every State Has a Room.
+            </span>
+          </h1>
 
-          <Button asChild variant="outline" size="lg">
-            <Link href="/room/maharashtra">
-              Drop into Maharashtra <ArrowRight className="h-4 w-4 ml-1" />
-            </Link>
-          </Button>
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
+            Drop into live audio junctions representing 28 Indian States &amp; UTs. Zero login, zero password, 100% anonymous WebRTC voice streams.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4 max-w-md sm:max-w-none mx-auto">
+            <Button asChild size="lg" className="gap-2 shadow-brutal-sm hover:shadow-brutal transition-all h-12 text-sm sm:text-base">
+              <Link href="/junctions">
+                Explore State Junctions <Mic className="h-5 w-5" />
+              </Link>
+            </Button>
+
+            <Button asChild variant="outline" size="lg" className="h-12 text-sm sm:text-base">
+              <Link href="/room/maharashtra">
+                Drop into Maharashtra <ArrowRight className="h-4 w-4 ml-1" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 

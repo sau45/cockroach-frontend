@@ -5,8 +5,6 @@ export async function apiClient<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-  
   const headers = new Headers(options.headers || {});
   if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
@@ -26,11 +24,33 @@ export async function apiClient<T>(
     }
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-    credentials: 'include' // Always send cookies (ct_session)
-  });
+  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const directUrl = `${API_BASE_URL}${normalizedEndpoint}`;
+  const relativeUrl = normalizedEndpoint;
+
+  let response: Response;
+  try {
+    response = await fetch(directUrl, {
+      ...options,
+      headers,
+      credentials: 'include' // Always send cookies (ct_session)
+    });
+  } catch (directErr: any) {
+    // If direct cross-origin request fails (e.g. CORS, PNA, or network block), try relative same-origin proxy
+    if (typeof window !== 'undefined' && directUrl !== relativeUrl) {
+      try {
+        response = await fetch(relativeUrl, {
+          ...options,
+          headers,
+          credentials: 'include'
+        });
+      } catch (fallbackErr: any) {
+        throw new Error('Unable to connect to server. Please check backend status.');
+      }
+    } else {
+      throw new Error('Unable to connect to server. Please check backend status.');
+    }
+  }
 
   const data = await response.json().catch(() => ({}));
 

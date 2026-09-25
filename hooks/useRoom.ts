@@ -33,6 +33,8 @@ export function useRoom({ socket, roomId, user, password, enabled = true }: UseR
   useEffect(() => {
     if (!enabled || !socket || !roomId || !user) return;
 
+    setError(null);
+
     getDeviceFingerprint().then((fp) => {
       socket.emit('join-room', {
         roomId,
@@ -55,6 +57,7 @@ export function useRoom({ socket, roomId, user, password, enabled = true }: UseR
 
     const handleRoomState = (state: RoomState) => {
       setRoomState(state);
+      setError(null);
       const myActive = state.activeMembers.find(
         (m) => m.tag === user?.tag || (socket && m.socketId === socket.id)
       );
@@ -398,6 +401,7 @@ export function useRoom({ socket, roomId, user, password, enabled = true }: UseR
     myQueueMember,
     myQueuePosition,
     isHandRaised,
+    clearError: () => setError(null),
     toggleMute,
     toggleVideo,
     setSpeaking,

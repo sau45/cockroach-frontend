@@ -7,8 +7,8 @@ import { usePathname } from 'next/navigation';
 export function Footer() {
   const pathname = usePathname();
 
-  // Do not render footer on live room sessions
-  if (pathname?.startsWith('/room')) {
+  // Do not render footer on live room sessions or junctions app view
+  if (pathname?.startsWith('/room') || pathname === '/junctions') {
     return null;
   }
 

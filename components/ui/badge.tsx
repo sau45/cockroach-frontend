@@ -15,7 +15,7 @@ const badgeVariants = cva(
           'border-border bg-destructive text-destructive-foreground shadow-brutal-coral',
         outline: 'border-border text-foreground',
         live: 'border-accent-coral bg-accent-coral/20 text-accent-coral animate-pulse',
-        gold: 'border-accent-gold bg-accent-gold/20 text-accent-gold',
+        gold: 'border-border bg-accent-gold text-black shadow-brutal-dark-sm font-extrabold',
         warning: 'border-amber-500 bg-amber-500/20 text-amber-500',
       },
     },

@@ -4,7 +4,7 @@ import { Mic, ShieldCheck, Zap, Radio, ArrowRight, Bug, Users } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AvatarGroup } from '@/components/ui/AvatarGroup';
-import { SPECIES_LIST } from '@/lib/constants';
+import { SPECIES_LIST, getStateFamousWords } from '@/lib/constants';
 
 export default function HomePage() {
   return (
@@ -92,35 +92,55 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {SPECIES_LIST.slice(0, 8).map((sp) => (
-            <Link
-              key={sp.id}
-              href={`/room/${sp.id}`}
-              className="p-4 rounded-brutal-md border-2 border-border bg-card shadow-brutal-dark-sm hover:border-primary hover:shadow-brutal transition-all group flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-mono text-xs text-muted-foreground font-bold">STATE</span>
-                  <span className="h-2 w-2 rounded-full bg-primary" />
-                </div>
-                <h3 className="font-mono font-bold text-base group-hover:text-primary transition-colors">
-                  {sp.name}
-                </h3>
-              </div>
+          {SPECIES_LIST.slice(0, 8).map((sp) => {
+            const famousWords = getStateFamousWords(sp.id);
 
-              <div className="flex items-center justify-between pt-4 mt-4 border-t border-border/50 text-xs text-muted-foreground font-mono">
-                <AvatarGroup
-                  users={[]}
-                  totalCount={0}
-                  maxDisplay={4}
-                  size="xs"
-                />
-                <span className="group-hover:translate-x-1 transition-transform text-primary font-bold">
-                  Enter →
-                </span>
-              </div>
-            </Link>
-          ))}
+            return (
+              <Link
+                key={sp.id}
+                href={`/room/${sp.id}`}
+                className="p-3.5 sm:p-4 rounded-brutal-md border-2 border-primary/25 bg-card shadow-brutal-dark-sm hover:border-primary hover:shadow-brutal opacity-85 hover:opacity-100 transition-all group flex flex-col justify-between h-[142px] min-w-0 overflow-hidden"
+              >
+                <div className="space-y-2.5">
+                  {/* Top Row: Type Badge on Left, State Name on Top Right */}
+                  <div className="flex items-center justify-between gap-2 h-6 min-w-0">
+                    <Badge variant="default" className="text-[9px] sm:text-[10px] uppercase font-mono font-bold tracking-wider px-2 py-0.5 shrink-0">
+                      STATE JUNCTION
+                    </Badge>
+                    <h3
+                      title={sp.name}
+                      className="font-mono font-extrabold text-xs sm:text-sm text-foreground group-hover:text-primary transition-colors truncate text-right tracking-tight"
+                    >
+                      {sp.name}
+                    </h3>
+                  </div>
+
+                  {/* 3 Famous Cultural Highlights of the State - Strictly One Row */}
+                  <div className="h-6 flex items-center">
+                    <div className="grid grid-cols-3 gap-1.5 w-full items-center">
+                      {famousWords.map((word, idx) => (
+                        <span
+                          key={idx}
+                          title={word}
+                          className="inline-flex items-center justify-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-mono font-medium bg-primary/10 border border-primary/25 text-foreground/90 group-hover:border-primary/50 group-hover:bg-primary/20 transition-all shadow-xs min-w-0"
+                        >
+                          <span className="w-1 h-1 rounded-full bg-primary/80 shrink-0" />
+                          <span className="truncate">{word}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2.5 border-t border-border/60 flex items-center justify-between h-7 text-xs text-muted-foreground font-mono mt-auto">
+                  <span className="text-[11px] text-muted-foreground font-mono">Voice Stage</span>
+                  <span className="group-hover:translate-x-1 transition-transform text-primary font-bold">
+                    Enter →
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

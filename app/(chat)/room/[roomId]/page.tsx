@@ -34,7 +34,22 @@ export default function RoomPage() {
   const params = useParams();
   const roomId = (params?.roomId as string) || 'maharashtra';
 
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pwdFromUrl = urlParams.get('pwd');
+        if (pwdFromUrl) {
+          sessionStorage.setItem(`room_pwd_${roomId}`, pwdFromUrl);
+          return pwdFromUrl;
+        }
+        return sessionStorage.getItem(`room_pwd_${roomId}`) || '';
+      } catch (e) {
+        return '';
+      }
+    }
+    return '';
+  });
   const [passwordInput, setPasswordInput] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
   const [hasUnreadChat, setHasUnreadChat] = useState(false);
@@ -63,6 +78,7 @@ export default function RoomPage() {
     toastMessage,
     emojis,
     error,
+    clearError,
     isMyModerator,
     isSeniorMod,
     myQueuePosition,
@@ -346,7 +362,14 @@ export default function RoomPage() {
       />
 
       {/* Password Required Dialog for Custom Room */}
-      <Dialog open={!!error && error.includes('password')} onOpenChange={() => {}}>
+      <Dialog
+        open={Boolean(error && error.toLowerCase().includes('password'))}
+        onOpenChange={(open) => {
+          if (!open) {
+            router.push('/junctions');
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Password Protected Room</DialogTitle>
@@ -355,10 +378,24 @@ export default function RoomPage() {
             </DialogDescription>
           </DialogHeader>
 
+          {error && (
+            <div className="p-2 text-xs text-destructive bg-destructive/10 border border-destructive rounded-brutal-sm font-mono">
+              {error}
+            </div>
+          )}
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              setPassword(passwordInput);
+              if (passwordInput.trim()) {
+                if (typeof window !== 'undefined') {
+                  try {
+                    sessionStorage.setItem(`room_pwd_${roomId}`, passwordInput.trim());
+                  } catch (err) {}
+                }
+                clearError();
+                setPassword(passwordInput.trim());
+              }
             }}
             className="space-y-4 pt-2"
           >

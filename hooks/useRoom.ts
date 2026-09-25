@@ -63,9 +63,6 @@ export function useRoom({ socket, roomId, user, password, enabled = true }: UseR
         if (typeof window !== 'undefined') {
           sessionStorage.setItem(`ct_role_${roomId}`, 'active');
         }
-        if (myActive.isMuted) {
-          setIsMuted(true);
-        }
       } else {
         const inQueue = state.waitingQueue.find(
           (q) => q.tag === user?.tag || (socket && q.socketId === socket.id)
@@ -103,9 +100,7 @@ export function useRoom({ socket, roomId, user, password, enabled = true }: UseR
       isSpeaking?: boolean;
     }) => {
       if ((tag && tag === user?.tag) || (socketId && socket && socketId === socket.id)) {
-        if (muted) {
-          setIsMuted(true);
-        }
+        setIsMuted(muted);
       }
       setRoomState((prev) => {
         if (!prev) return prev;

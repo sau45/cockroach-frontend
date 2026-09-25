@@ -19,6 +19,13 @@ export async function apiClient<T>(
     }
   } catch (e) {}
 
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('ct_session_token');
+    if (token && !headers.has('Authorization')) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+  }
+
   const response = await fetch(url, {
     ...options,
     headers,
@@ -26,6 +33,10 @@ export async function apiClient<T>(
   });
 
   const data = await response.json().catch(() => ({}));
+
+  if (data && typeof data === 'object' && (data as any).token && typeof window !== 'undefined') {
+    localStorage.setItem('ct_session_token', (data as any).token);
+  }
 
   if (!response.ok) {
     const errorMsg = data.message || `Request failed with status ${response.status}`;
